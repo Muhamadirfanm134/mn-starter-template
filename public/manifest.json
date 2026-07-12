@@ -1,0 +1,33 @@
+{
+	"name": "App Starter",
+	"short_name": "App Starter",
+	"id": "/",
+	"description": "Next.js + Supabase starter template dengan design system.",
+	"lang": "en",
+	"start_url": "/home",
+	"display": "standalone",
+	"orientation": "portrait",
+	"background_color": "#ffffff",
+	"theme_color": "#0097b2",
+	"icons": [
+		{
+			"src": "/icon.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icon.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icon.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	],
+	"categories": ["productivity"]
+}

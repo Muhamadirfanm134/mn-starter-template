@@ -1,0 +1,24 @@
+{
+	"git": {
+		"requireBranch": "main",
+		"requireCleanWorkingDir": true,
+		"requireUpstream": true,
+		"commitMessage": "chore: release v${version}",
+		"tagName": "v${version}",
+		"tagAnnotation": "Release v${version}"
+	},
+	"npm": {
+		"publish": false
+	},
+	"github": {
+		"release": true,
+		"releaseName": "v${version}"
+	},
+	"plugins": {
+		"@release-it/conventional-changelog": {
+			"preset": "conventionalcommits",
+			"infile": "CHANGELOG.md",
+			"header": "# Changelog\n\nAll notable changes to this project will be documented here.\n"
+		}
+	}
+}

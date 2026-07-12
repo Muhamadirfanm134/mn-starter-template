@@ -1,0 +1,18 @@
+echo ""
+echo "🧩✨  Pre-Commit Hook Activated!"
+echo "🔧 Running: lint-staged for quality checks..."
+echo ""
+
+pnpm lint-staged
+
+if [ $? -eq 0 ]; then
+  echo ""
+  echo "✅ Success! Code looks sharp, clean, and ready to ship."
+  echo ""
+else
+  echo ""
+  echo "❌ Commit rejected. Please fix issues above before continuing."
+  echo "💡 Pro Tip: Run \`pnpm lint\` or \`biome check --write .\` manually to debug."
+  echo ""
+  exit 1
+fi
