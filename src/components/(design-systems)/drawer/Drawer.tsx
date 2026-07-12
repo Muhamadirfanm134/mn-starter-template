@@ -1,11 +1,6 @@
-import {
-	Description,
-	Dialog,
-	DialogTitle,
-	Transition,
-	TransitionChild,
-} from "@headlessui/react";
-import { Fragment } from "react";
+"use client";
+
+import { Dialog } from "radix-ui";
 
 type DrawerProps = {
 	header?: React.ReactNode;
@@ -23,46 +18,19 @@ export default function Drawer({
 	setIsOpen,
 }: DrawerProps) {
 	return (
-		<Transition show={isOpen} as={Fragment}>
-			<Dialog static onClose={() => setIsOpen(false)} className="relative z-30">
-				<div className="fixed inset-0 flex h-full w-full">
-					<TransitionChild
-						as={Fragment}
-						enter="transition-opacity ease-in duration-300"
-						enterFrom="opacity-0"
-						enterTo="opacity-30"
-						leave="transition-opacity ease-out duration-300"
-						leaveFrom="opacity-30"
-						leaveTo="opacity-0"
-					>
-						<div
-							className="fixed inset-0 bg-(--color-grey-800)/50"
-							aria-hidden="true"
-							onClick={() => setIsOpen(false)}
-						/>
-					</TransitionChild>
-
-					<TransitionChild
-						as={Fragment}
-						enter="transition ease-in-out duration-300 transform"
-						enterFrom="-translate-x-full"
-						enterTo="translate-x-0"
-						leave="transition ease-in-out duration-300 transform"
-						leaveFrom="translate-x-0"
-						leaveTo="-translate-x-full"
-					>
-						<div className="z-50 flex w-[70vw] flex-col justify-between overflow-hidden rounded-r-2xl bg-white text-left md:w-sm lg:w-md">
-							<DialogTitle className="flex items-center justify-center p-5 text-2xl font-bold text-(--color-primary-500) md:text-4xl">
-								{header}
-							</DialogTitle>
-							<div className="h-full overflow-y-scroll">
-								<Description>{description}</Description>
-								<div className="p-4">{children}</div>
-							</div>
-						</div>
-					</TransitionChild>
-				</div>
-			</Dialog>
-		</Transition>
+		<Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+			<Dialog.Portal>
+				<Dialog.Overlay className="fixed inset-0 z-30 bg-(--color-grey-800)/50 duration-300 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+				<Dialog.Content className="fixed inset-y-0 left-0 z-50 flex w-[70vw] flex-col justify-between overflow-hidden rounded-r-2xl bg-white text-left duration-300 focus:outline-none data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:animate-in data-[state=open]:slide-in-from-left md:w-sm lg:w-md">
+					<Dialog.Title className="flex items-center justify-center p-5 text-2xl font-bold text-(--color-primary-500) md:text-4xl">
+						{header}
+					</Dialog.Title>
+					<div className="h-full overflow-y-scroll">
+						<Dialog.Description>{description}</Dialog.Description>
+						<div className="p-4">{children}</div>
+					</div>
+				</Dialog.Content>
+			</Dialog.Portal>
+		</Dialog.Root>
 	);
 }

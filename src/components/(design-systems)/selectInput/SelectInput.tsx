@@ -1,16 +1,11 @@
 "use client";
 
-import {
-	Listbox,
-	ListboxButton,
-	ListboxOption,
-	ListboxOptions,
-} from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { LucideCheck } from "lucide-react";
 import Image from "next/image";
+import { Popover } from "radix-ui";
 import { useState } from "react";
 import { useTailwindBreakpoint } from "@/hooks/useTailwindBreakpoint";
 import type { OnChange, Option } from "@/lib/types";
@@ -48,6 +43,7 @@ export default function SelectInput({
 }: SelectInputProps) {
 	const breakpoint = useTailwindBreakpoint();
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const isMobile =
@@ -173,59 +169,80 @@ export default function SelectInput({
 
 	return (
 		<div className={clsx(`relative mx-auto w-${width}`, className)}>
-			<Listbox
-				value={selected}
-				onChange={(value) => {
-					onChange({
-						name: name,
-						value: value,
-					});
+			<Popover.Root
+				open={isPopoverOpen}
+				onOpenChange={(open) => {
+					setIsPopoverOpen(open);
+					if (!open) setSearchQuery("");
 				}}
 			>
-				<ListboxButton id={id} className={buttonClasses}>
+				<Popover.Trigger id={id} className={buttonClasses}>
 					{buttonContent}
-				</ListboxButton>
-				<ListboxOptions
-					transition
-					className={clsx(
-						"absolute left-0 z-110 mt-1 w-full rounded-xl border border-gray-300 bg-white p-1 shadow-lg focus:outline-none",
-						"transition duration-100 ease-in data-leave:data-closed:opacity-0",
-					)}
-				>
-					<div className="p-2">
-						{options.length > 8 && SearchInput}
-						<div className="max-h-60 overflow-y-auto pt-1">
-							{filteredOptions.length > 0 ? (
-								filteredOptions.map((option) => (
-									<ListboxOption
-										key={option.id}
-										value={option.value}
-										className="group relative flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-(--color-grey-800)/10"
-									>
-										{option.icon ? (
-											<Image
-												src={option.icon}
-												alt="icon"
-												width={20}
-												height={20}
-											/>
-										) : (
-											<CheckIcon className="invisible size-4 fill-(--color-primary-500) group-data-selected:visible" />
-										)}
-										<div className="text-sm/6 text-(--color-grey-800) group-data-selected:text-(--color-primary-500)">
-											{option.label}
-										</div>
-									</ListboxOption>
-								))
-							) : (
-								<div className="py-4 text-center text-xs text-gray-400">
-									Tidak ada hasil
-								</div>
-							)}
+				</Popover.Trigger>
+				<Popover.Portal>
+					<Popover.Content
+						align="start"
+						sideOffset={4}
+						className={clsx(
+							"z-110 w-(--radix-popover-trigger-width) rounded-xl border border-gray-300 bg-white p-1 shadow-lg focus:outline-none",
+							"data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+						)}
+					>
+						<div className="p-2">
+							{options.length > 8 && SearchInput}
+							<div className="max-h-60 overflow-y-auto pt-1">
+								{filteredOptions.length > 0 ? (
+									filteredOptions.map((option) => {
+										const isSelected = selected === option.value;
+										return (
+											<button
+												key={option.id}
+												type="button"
+												onClick={() => {
+													onChange({ name, value: option.value as string });
+													setIsPopoverOpen(false);
+													setSearchQuery("");
+												}}
+												className="group relative flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5 text-left select-none hover:bg-(--color-grey-800)/10"
+											>
+												{option.icon ? (
+													<Image
+														src={option.icon}
+														alt="icon"
+														width={20}
+														height={20}
+													/>
+												) : (
+													<CheckIcon
+														className={clsx(
+															"size-4 fill-(--color-primary-500)",
+															isSelected ? "visible" : "invisible",
+														)}
+													/>
+												)}
+												<div
+													className={clsx(
+														"text-sm/6",
+														isSelected
+															? "text-(--color-primary-500)"
+															: "text-(--color-grey-800)",
+													)}
+												>
+													{option.label}
+												</div>
+											</button>
+										);
+									})
+								) : (
+									<div className="py-4 text-center text-xs text-gray-400">
+										Tidak ada hasil
+									</div>
+								)}
+							</div>
 						</div>
-					</div>
-				</ListboxOptions>
-			</Listbox>
+					</Popover.Content>
+				</Popover.Portal>
+			</Popover.Root>
 		</div>
 	);
 }
